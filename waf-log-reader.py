@@ -6,9 +6,9 @@ import mysql.connector
 import time
 from datetime import datetime, timedelta
 
-#######################
-# see waf-log-reader.md
-#######################
+##################################
+# see waf-log-reader.md and README
+##################################
 
 load_dotenv()
 
