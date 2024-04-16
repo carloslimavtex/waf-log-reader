@@ -1,0 +1,34 @@
+# CDN Data Ingestion and Storage
+
+This Python script fetches HTTP events from a CDN provider's GraphQL endpoint, filters them based on specified criteria, and stores them in a MySQL database. It is highly configurable and continuously runs until reaching a target timestamp.
+
+## Features
+
+- Fetch HTTP events from a CDN provider's GraphQL endpoint.
+- Filter data based on timestamp range and host.
+- Store filtered data in a MySQL database table.
+- Continuously fetch data in batches until reaching the target timestamp.
+
+## Usage
+
+1. Clone the repository to your local machine.
+2. Install dependencies using `pip`.
+3. Create a `.env` file and configure environment variables as per the provided `env.example`.
+4. Ensure MySQL server is running and accessible.
+5. Execute the Python script `script.py` to start data ingestion and storage.
+
+## Dependencies
+
+- `requests`: For making HTTP requests.
+- `python-dotenv`: For loading environment variables from a `.env` file.
+- `mysql-connector-python`: For interacting with MySQL databases.
+
+## Configuration
+
+- Adjust the GraphQL query and database schema according to specific requirements.
+- Monitor script execution and database performance for large datasets.
+- Contributions and feedback are welcome!
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
