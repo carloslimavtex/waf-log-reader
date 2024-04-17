@@ -147,7 +147,7 @@ while datetime.fromisoformat(running_datetime.replace("Z", "+00:00")) != datetim
           access_logs = data['data']['httpEvents']
           number_of_records = len(access_logs)
           first_ts = ""
-          print("-- Running SQL Statements against DB")
+          print(f"-- Running SQL Statements against DB for {number_of_records} records")
           mycursor = mydb.cursor()
           sql_start = time.time()
           for log in access_logs:
@@ -162,8 +162,15 @@ while datetime.fromisoformat(running_datetime.replace("Z", "+00:00")) != datetim
                 except mysql.connector.Error as err:
                     print (f"SQL Error: {err}")
           sql_finish = time.time()
-          last_ts_obj = datetime.fromisoformat(last_ts.replace("Z", "+00:00"))
-          first_ts_obj = datetime.fromisoformat(first_ts.replace("Z", "+00:00"))
+          
+          if number_of_records>0:
+            last_ts_obj = datetime.fromisoformat(last_ts.replace("Z", "+00:00"))
+            first_ts_obj = datetime.fromisoformat(first_ts.replace("Z", "+00:00"))
+            running_datetime = last_ts
+          else:
+            last_ts_obj = datetime.now()
+            first_ts_obj = last_ts_obj
+            running_datetime = target_time_stamp
 
           print(f"SQL Time taken: \t{(sql_finish-sql_start)*10**3:.03f}ms")
           print(f"DataSet Time Span:\t{last_ts_obj-first_ts_obj}")
@@ -171,7 +178,7 @@ while datetime.fromisoformat(running_datetime.replace("Z", "+00:00")) != datetim
 
           mydb.commit()
 
-          running_datetime = last_ts
+          
 
       else:
           print("No access logs found for the specified time range.")
