@@ -5,11 +5,19 @@ import requests
 import mysql.connector
 import time
 from datetime import datetime, timedelta
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
 ####################################
 # see waf-log-reader.md and README
 # for more information on how to use
 ####################################
+
+# Parse command line arguments
+parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+parser.add_argument("-t", "--timetostartfrom", default="", help="Force start date and time to query GraphQL from. Example: -t 2024-04-16T00:00:00Z")
+args = vars(parser.parse_args())
+
+start_date_time = args['timetostartfrom']
 
 load_dotenv()
 
@@ -103,19 +111,22 @@ print(f"Successfully Connected to MySQL Database at {os.environ[DB_HOST_VAR_NAME
 
 # Find last timestamp for hosts lists in table
 
-last_TS_query = f"""SELECT MAX(requestTS) FROM httpRequests WHERE requestHost in ('{hosts_list_filter}');"""
-mycursor = mydb.cursor()
-mycursor.execute(last_TS_query)
-last_TS_recordset = mycursor.fetchone()
-
-if last_TS_recordset[0] is not None:
-    last_time_stamp = last_TS_recordset[0]
-    print(f"Last TimeStamp found for {hosts_list_filter} was {last_time_stamp}")
+if start_date_time:
+    last_time_stamp = start_date_time
 else:
-    last_time_stamp = first_run_datetime
-    print(f"No TimeStamp found for {hosts_list_filter} using first run date instead {first_run_datetime}!")
+    last_TS_query = f"""SELECT MAX(requestTS) FROM httpRequests WHERE requestHost in ('{hosts_list_filter}');"""
+    mycursor = mydb.cursor()
+    mycursor.execute(last_TS_query)
+    last_TS_recordset = mycursor.fetchone()
 
-if mycursor: mycursor.close()
+    if last_TS_recordset[0] is not None:
+        last_time_stamp = last_TS_recordset[0]
+        print(f"Last TimeStamp found for {hosts_list_filter} was {last_time_stamp}")
+    else:
+        last_time_stamp = first_run_datetime
+        print(f"No TimeStamp found for {hosts_list_filter} using first run date instead {first_run_datetime}!")
+
+    if mycursor: mycursor.close()
 
 original_ts, updated_ts = add_one_hour_to_timestamp(last_time_stamp)
 
