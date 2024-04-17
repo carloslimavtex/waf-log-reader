@@ -135,8 +135,11 @@ print (f"Target TimeStamp is {target_time_stamp}")
 
 GRAPHQL_BATCH_SIZE = 10000
 running_datetime = last_time_stamp
+number_of_records = GRAPHQL_BATCH_SIZE
 
-while datetime.fromisoformat(running_datetime.replace("Z", "+00:00")) != datetime.fromisoformat(target_time_stamp.replace("Z", "+00:00")):
+#while datetime.fromisoformat(running_datetime.replace("Z", "+00:00")) != datetime.fromisoformat(target_time_stamp.replace("Z", "+00:00")):
+# while response set equals to request size, keep running it...
+while number_of_records==GRAPHQL_BATCH_SIZE:
   # GraphQL Query for HTTP Requests
   json_query= {
     "query": f'query HttpQuery {{httpEvents(limit: {GRAPHQL_BATCH_SIZE}, filter: {{tsRange: {{begin:"{running_datetime}", end:"{target_time_stamp}"}}  host: "{hosts_list_filter}"}}, orderBy: [ts_ASC]) {{ts remoteAddress httpUserAgent host requestUri stacktrace geolocCountryName geolocRegionName status sslCipher httpReferer upstreamResponseTime upstreamResponseTimeStr upstreamBytesReceivedStr requestTime wafBlock wafScore}}}}',
